@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>موقع تفاعلي</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f4f7f6;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .card {
+            background: #ffffff;
+            padding: 40px 30px;
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+            width: 100%;
+            max-width: 480px;
+            text-align: center;
+            border: 1px solid #e1e8ed;
+        }
+
+        .screen {
+            display: none;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            line-height: 1.6;
+            font-weight: 600;
+        }
+
+        .message {
+            font-size: 1.1rem;
+            color: #4a5568;
+            margin-bottom: 25px;
+            line-height: 1.7;
+        }
+
+        input[type="password"] {
+            width: 100%;
+            padding: 12px 15px;
+            margin-bottom: 20px;
+            border: 2px solid #cbd5e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            text-align: center;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        input[type="password"]:focus {
+            border-color: #4a90e2;
+        }
+
+        button {
+            background-color: #4a90e2;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.1s;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #357abd;
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        audio {
+            width: 100%;
+            margin-top: 15px;
+            outline: none;
+        }
+
+        .error-msg {
+            color: #e53e3e;
+            font-size: 0.9rem;
+            margin-top: -10px;
+            margin-bottom: 15px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- العناصر الصوتية (قم بتغيير الأسماء لتطابق أسماء الملفات لديك تماماً) -->
+    <audio id="audioWrong" src="false.mp3" preload="auto"></audio>
+    <audio id="audioCorrect" src="true.mp3" preload="auto"></audio>
+
+    <div class="card">
+        
+        <!-- الواجهة الأولى -->
+        <div id="screen1" class="screen active">
+            <h2>والله مهتتدخلو الا ماهتكتبو الباسوورد يعالم ينتنه</h2>
+            <input type="password" id="passwordInput" placeholder="أدخل كلمة السر هنا">
+            <div id="errorText" class="error-msg">كلمة السر غير صحيحة!</div>
+            <button onclick="checkPassword()">دخول</button>
+        </div>
+
+        <!-- الواجهة الثانية -->
+        <div id="screen2" class="screen">
+            <h2>استمع للأغنية 🎶</h2>
+            <!-- تم استخدام أحدث اسم للملف الصوتي الخاص بالأغنية -->
+            <audio id="audioSong" controls src="frindes.mp3" preload="auto"></audio>
+            <br><br>
+            <button onclick="goToScreen(3)">الانتقال للواجهة التالية ➔</button>
+        </div>
+
+        <!-- الواجهة الثالثة -->
+        <div id="screen3" class="screen">
+            <p class="message">
+                اقسم بالله انتو حبة بهايم اصلا ومتتعاشروش بس بتضحكوني وببق مبسوطه معاكم ilove you يشوية عرر
+            </p>
+            <button onclick="goToScreen(1)">العودة للواجهة الأولى ↺</button>
+        </div>
+
+    </div>
+
+    <script>
+        function playAudio(audioElement) {
+            audioElement.currentTime = 0;
+            var promise = audioElement.play();
+            if (promise !== undefined) {
+                promise.catch(function(error) {
+                    console.log("تعذر التشغيل التلقائي للصوت:", error);
+                });
+            }
+        }
+
+        function checkPassword() {
+            const passInput = document.getElementById('passwordInput').value;
+            const audioWrong = document.getElementById('audioWrong');
+            const audioCorrect = document.getElementById('audioCorrect');
+            const errorText = document.getElementById('errorText');
+
+            // إيقاف أي أصوات شغال حالياً
+            audioWrong.pause();
+            audioCorrect.pause();
+
+            if (passInput === "152004") {
+                errorText.style.display = 'none';
+                playAudio(audioCorrect);
+                
+                // الانتقال للواجهة الثانية بعد انتهاء صوت الإجابة الصحيحة أو ثانتين
+                setTimeout(function() {
+                    goToScreen(2);
+                }, 2000);
+            } else {
+                errorText.style.display = 'block';
+                playAudio(audioWrong);
+            }
+        }
+
+        function goToScreen(screenNumber) {
+            const audioSong = document.getElementById('audioSong');
+            if (audioSong) {
+                audioSong.pause();
+            }
+
+            document.querySelectorAll('.screen').forEach(function(screen) {
+                screen.classList.remove('active');
+            });
+
+            document.getElementById('screen' + screenNumber).classList.add('active');
+        }
+    </script>
+</body>
+</html>
